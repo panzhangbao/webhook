@@ -1,7 +1,6 @@
 package com.webhook.controller;
 
-import com.webhook.utils.DateUtils;
-import com.webhook.utils.HttpUtils;
+import com.webhook.service.CommonService;
 import com.webhook.utils.ShellUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
@@ -10,39 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
  * webhook controller
  */
 @RestController
-@RequestMapping("webhook")
+@RequestMapping
 public class WebhookController {
-    /**
-     * 是否启用 IP 白名单（0：禁用；1：启用）
-     */
-    @Value("${ip.whitelist.enabled}")
-    private Boolean ipEnabled;
-
-    /**
-     * IP 白名单
-     */
-    @Value("${ip.whitelist.content}")
-    private List<String> ipList;
-
-    /**
-     * 是否启用 webhook 密钥（0：禁用；1：启用）
-     */
-    @Value("${webhook.secret.enabled}")
-    private Boolean secretEnabled;
-
-    /**
-     * webhook 密钥，防止接口被盗用
-     */
-    @Value("${webhook.secret.content}")
-    private String secret;
-
     /**
      * 脚本路径
      */
@@ -55,6 +30,9 @@ public class WebhookController {
     @Value("${script.names}")
     private List<String> scriptNameList;
 
+    @Resource
+    private CommonService commonService;
+
     /**
      * 执行脚本
      *
@@ -64,23 +42,15 @@ public class WebhookController {
      */
     @GetMapping
     public String exec(@RequestParam String name, String secret) {
-        String ip = HttpUtils.getIpAddress();
-        String date = DateUtils.dateToString(new Date());
-        String msg = date + " IP：" + ip + " 执行 " + name + ".sh ";
+        String msg = "执行 " + name + ".sh ";
 
+        // 校验 ip 白名单、webhook 密钥
+        if (!commonService.check(secret, msg)) {
+            return "失败";
+        }
         // 脚本名非空
         if (StringUtils.isEmpty(name)) {
             System.out.println(msg + "失败，未输入脚本名");
-            return "失败";
-        }
-        // IP 白名单校验
-        if (ipEnabled && !ipList.contains(ip)) {
-            System.out.println(msg + "失败，IP 错误，IP 为 " + ip);
-            return "失败";
-        }
-        // webhook 密钥校验
-        if (secretEnabled && !this.secret.equals(secret)) {
-            System.out.println(msg + "失败，密钥错误，密钥为 " + secret);
             return "失败";
         }
         // 脚本名校验

@@ -1,5 +1,7 @@
 server:
   port: 12345                           # 端口
+  servlet:
+    context-path: /webhook              # 接口前缀
 
 # IP 白名单
 ip:
@@ -17,3 +19,7 @@ webhook:
 script:
   path: /home/admin/scripts/            # 脚本路径
   names: a,b,c                          # 脚本名称列表，即 a.sh, b.sh, c.sh
+
+# 文件
+file:
+  path: /home/admin/file                # 文件存储路径
