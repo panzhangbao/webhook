@@ -17,13 +17,13 @@ public class CommonServiceImpl implements CommonService {
     /**
      * 是否启用 IP 白名单（0：禁用；1：启用）
      */
-    @Value("${ip.whitelist.enabled}")
+    @Value("${webhook.ip.whitelist.enabled}")
     private Boolean ipEnabled;
 
     /**
      * IP 白名单
      */
-    @Value("${ip.whitelist.content}")
+    @Value("${webhook.ip.whitelist.content}")
     private List<String> ipList;
 
     /**

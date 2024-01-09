@@ -21,7 +21,7 @@ public class FileController {
     /**
      * 文件存储路径
      */
-    @Value("${file.path}")
+    @Value("${webhook.file.path}")
     private String filePath;
 
     @Resource

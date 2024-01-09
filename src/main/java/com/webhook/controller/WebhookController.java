@@ -21,13 +21,13 @@ public class WebhookController {
     /**
      * 脚本路径
      */
-    @Value("${script.path}")
+    @Value("${webhook.script.path}")
     private String scriptPath;
 
     /**
      * 脚本名列表
      */
-    @Value("${script.names}")
+    @Value("${webhook.script.names}")
     private List<String> scriptNameList;
 
     @Resource
